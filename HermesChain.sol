@@ -28,5 +28,35 @@ contract Hermes is Ownable{
         address patient;
         Status status;
     }
-} 
-// 
+    /**
+      -klinik her hasta için yalnızca bir bekleyen fatura oluşturabilir ve yeni bir tane oluşturmaya çalışırsa 
+      eskisini geçersiz kılar .
+      -birden fazla klinikten birden fazla fatura oluşturulabilir.
+     */
+    mapping (address => mapping(bytes32 => Invoice)) pendingRequests; 
+    modifier onlyClinic{
+        require(clinicIds[msg.sender] != 0x0,"Only clinics call perform this operations"); //Bu işlemleri sadece Klinikler yapar.
+        _;
+    }
+
+    modifier onlyPatient{
+        require(patientCategories[msg.sender] != 0x0, "There is no patient registered with this address"); // Bu adrese kayıtlı hasta bulunmamaktadır.
+        _;
+    }
+
+
+    /**
+    * Bu Fonksiyon Kliniklerden çağrılabilir
+    *zaten kayıtlı bir klinik varsa, sözleşme güvenlik nedeniyle tekrar kaydolmasına izin vermez
+    
+    */
+    function registerClinic(bytes32 _clinicHash, address clinicAddress) public onlyOwner{
+        clinicIds[clinicAddress] = _clinicHash;
+    }
+
+
+
+
+ 
+    
+}

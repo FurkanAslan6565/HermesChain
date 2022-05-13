@@ -88,6 +88,24 @@
 				"type": "function"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "_clinicHash",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "clinicAddress",
+						"type": "address"
+					}
+				],
+				"name": "registerClinic",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "renounceOwnership",
 				"outputs": [],
@@ -125,7 +143,11 @@
 		},
 		"userdoc": {
 			"kind": "user",
-			"methods": {},
+			"methods": {
+				"registerClinic(bytes32,address)": {
+					"notice": "Bu Fonksiyon Kliniklerden çağrılabilir zaten kayıtlı bir klinik varsa, sözleşme güvenlik nedeniyle tekrar kaydolmasına izin vermez"
+				}
+			},
 			"version": 1
 		}
 	},
@@ -162,11 +184,11 @@
 			]
 		},
 		"HermesChain.sol": {
-			"keccak256": "0x85c28e323e71d2c738a414b16887562b5fb75c1d1761537691a5a1bddf879d14",
+			"keccak256": "0x15c3484d1023444d93bc9784b348f2d6422d3ffdfc0a16ed6b19e6396f2f073d",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://2885a9554d29e23419f9f50a19252b771cea31ed0a260cddcff4e25df45fb0ed",
-				"dweb:/ipfs/QmeCXzkk5WGhipW7qxbAHZd4rsBe8cAH637E4teZkHq4QK"
+				"bzz-raw://1858e15e107da5991c4ea227a31ddc8733c23f2ea05e01af27c3e8a98e0201d0",
+				"dweb:/ipfs/QmZfVq38GqAkdZTo4bdq8qfsAQKbjAuvpvXCEiVfM9pP6R"
 			]
 		}
 	},
