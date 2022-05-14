@@ -8,15 +8,26 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Hermes is Ownable{
     uint256 invoiceCreated; 
-    mapping( bytes32 => uint256) _prices; // Mevzuata karşılık gelen fiyat  ornek (keccak256 (S00010  = > 100  fiyatlama  yapıldı.)
+    mapping( bytes32 => uint256) _prices; // Mevzuata karşılık gelen fiyat ornek -> (keccak256 (S00010  = > 100  fiyatlama yapıldı.)
     // mapping (address => address) _operators;  // Yalnızca izin verilen operatörler fatura oluşturabilir
-    mapping (address => bytes32) clinicIds; // Yalnızca kayıtlı klinikler kayıtlı adreslerle fatura oluşturabilir
-    mapping (address => bytes32 ) patientCategories; // Hasta kaydedildi ise bunu kullanacağız
+    mapping (address => bytes32) groupA_clinicIds; // Yalnızca kayıtlı  klinikler kayıtlı adreslerle fatura oluşturabilir A rol grubu hastaneler
+    mapping (address => bytes32) groupB_clinicIds; // Yalnızca kayıtlı  klinikler kayıtlı adreslerle fatura oluşturabilir B rol grubu hastaneler & ADMS
+    mapping (address => bytes32 ) patientCategories; // Hasta kateforilerini belirle
     mapping (address => Invoice[]) patientPastInvoices; // Bunu zincir üzerinde depolamak verimli değil ama biz MVP aşaması için saklıyoruz 
     mapping (bytes32 => Invoice) invoiceRecordsById; // Bunu zincir üzerinde depolamak verimli değil ama biz MVP aşaması için saklıyoruz 
     event InvocieCreated(address indexed patient, bytes32 indexed clinic, uint256 timestamp);
     event InvocieAccepted(address indexed patient, bytes32 indexed clinic, uint256 timestamp);
     //event InvociePaid(address indexed patient, bytes32 indexed clinic, uint256 timestamp);
+    
+     /*
+    A ROL GRUBU HASTANELER 
+     -  3 katına kadar tavan iyat belirleyebilir 
+    B ROL GRUBU HASTANELER & ADSM
+     - 2 Katına kadar tavan fiyat belirleyebilir.
+    
+    */
+    
+
 
     enum Status {
         Pending, Accepted, Rejected
@@ -34,8 +45,18 @@ contract Hermes is Ownable{
       -birden fazla klinikten birden fazla fatura oluşturulabilir.
      */
     mapping (address => mapping(bytes32 => Invoice)) pendingRequests; 
-    modifier onlyClinic{
-        require(clinicIds[msg.sender] != 0x0,"Only clinics call perform this operations"); //Bu işlemleri sadece Klinikler yapar.
+    /*
+    A ROL GRUBU HASTANELER 
+     -  3 katına kadar tavan iyat belirleyebilir 
+    B ROL GRUBU HASTANELER & ADSM
+     - 2 Katına kadar tavan fiyat belirleyebilir.
+    
+    */
+    modifier onlyClinic(bool groupA){
+        if(groupA)
+            require(groupA_clinicIds[msg.sender] != 0x0 ,"Only clinics can perform this operations"); //Bu operasyonları sadece klinikler yapar
+        else
+            require(groupB_clinicIds[msg.sender] != 0x0 ,"Only clinics can perform this operations"); // Bu operasynları sadece kilikler yapar
         _;
     }
 
@@ -50,8 +71,11 @@ contract Hermes is Ownable{
     *zaten kayıtlı bir klinik varsa, sözleşme güvenlik nedeniyle tekrar kaydolmasına izin vermez
     
     */
-    function registerClinic(bytes32 _clinicHash, address clinicAddress) public onlyOwner{
-        clinicIds[clinicAddress] = _clinicHash;
+   function registerClinic(bytes32 _clinicHash, address clinicAddress, bool groupA) public onlyOwner{
+        if(groupA)
+            groupA_clinicIds[clinicAddress] = _clinicHash;
+        else
+            groupB_clinicIds[clinicAddress] = _clinicHash;
     }
     /**
     * Bu işlev klinik tarafından çağrılabilir
@@ -61,14 +85,17 @@ contract Hermes is Ownable{
     * PatientAddress adres fatura sahibi
     
     */
-    function createInvoice(address patientAddress, uint256 amount, bytes32 patientCategory) public onlyClinic{
+   function createInvoice(address patientAddress, uint256 amount, bytes32 patientCategory, bool groupA) public onlyClinic(groupA){
         if(patientCategories[patientAddress] == 0){
-            patientCategories[patientAddress] = patientCategory; //eğer hastanaeden almmaışsa kendi adresini 
+            patientCategories[patientAddress] = patientCategory; 
         }else{
-            require(patientCategories[patientAddress] == patientCategory, "Patient can't be charged for this category"); //Bu kategori için hastadan ücret alınamaz
+            require(patientCategories[patientAddress] == patientCategory, "Patient can't be charged for this category");
         }
+        uint256 co = 2;
+        if(groupA)
+            co = 3;
         unchecked{
-            require(_prices[patientCategory] *3 >= amount, "Patient can't be charged this amount"); //"Hastadan bu miktar tahsil edilemez 3 katından az olacak
+            require(_prices[patientCategory] * co >= amount, "Patient can't be charged this amount");
         }
 
         Invoice memory newInvoice = Invoice(
@@ -79,11 +106,16 @@ contract Hermes is Ownable{
             Status.Pending
         );
 
-        pendingRequests[patientAddress][clinicIds[msg.sender]] = newInvoice;
-        emit InvocieCreated(patientAddress, clinicIds[msg.sender], amount);
+        if(groupA){
+            pendingRequests[patientAddress][groupA_clinicIds[msg.sender]] = newInvoice;
+            emit InvocieCreated(patientAddress, groupA_clinicIds[msg.sender], amount);
+        }else{
+            pendingRequests[patientAddress][groupB_clinicIds[msg.sender]] = newInvoice;
+            emit InvocieCreated(patientAddress, groupB_clinicIds[msg.sender], amount);
+        }
+        
 
     }
-
 
    // Faturayı onayla
     /**
@@ -116,8 +148,36 @@ contract Hermes is Ownable{
     }
 
    
+    // Fiyat ve kategoriyi ayarla
+    function setPrice(bytes32 categoryHash, uint256 amount) external onlyOwner{
+        _prices[categoryHash] = amount;
+    }
+    
+    // Kullanıcı kategorisini değiştir.
+    function setUsersCategory(address patient, bytes32 newCategory) external onlyOwner{
+        patientCategories[patient] = newCategory;
+    }
+
+    // Kimliğe göre fatura al
+    function getInvoiceById(bytes32 id) external view returns(Invoice memory){
+        return invoiceRecordsById[id];
+    }
+
+    // Hasta tarafındna fatura al
+    function getInvoiceByPatient(address patient, uint256 index) external view returns(Invoice memory){
+        return patientPastInvoices[patient][index];
+    }
+
+    // Faturayı öde (Daha sonra hermes jetonu ile uygulanacaktır)
+
+    // TEST FONKSİYONU
+    function getHash(string memory message) external pure returns(bytes32){
+        return keccak256(abi.encodePacked(message));
+    }
     
 }
+    
+
 
 
 

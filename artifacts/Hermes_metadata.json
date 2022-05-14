@@ -108,11 +108,132 @@
 						"internalType": "bytes32",
 						"name": "patientCategory",
 						"type": "bytes32"
+					},
+					{
+						"internalType": "bool",
+						"name": "groupA",
+						"type": "bool"
 					}
 				],
 				"name": "createInvoice",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "message",
+						"type": "string"
+					}
+				],
+				"name": "getHash",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "id",
+						"type": "bytes32"
+					}
+				],
+				"name": "getInvoiceById",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "invoiceId",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "typeOfPatient",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "uint256",
+								"name": "amount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "patient",
+								"type": "address"
+							},
+							{
+								"internalType": "enum Hermes.Status",
+								"name": "status",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct Hermes.Invoice",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "index",
+						"type": "uint256"
+					}
+				],
+				"name": "getInvoiceByPatient",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "invoiceId",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "typeOfPatient",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "uint256",
+								"name": "amount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "patient",
+								"type": "address"
+							},
+							{
+								"internalType": "enum Hermes.Status",
+								"name": "status",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct Hermes.Invoice",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -139,6 +260,11 @@
 						"internalType": "address",
 						"name": "clinicAddress",
 						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "groupA",
+						"type": "bool"
 					}
 				],
 				"name": "registerClinic",
@@ -149,6 +275,42 @@
 			{
 				"inputs": [],
 				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "categoryHash",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "setPrice",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "newCategory",
+						"type": "bytes32"
+					}
+				],
+				"name": "setUsersCategory",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -188,10 +350,10 @@
 				"approveInvoice(bytes32,bool)": {
 					"notice": "Bu fonksiyon hasta tarafından çağrılabilir Fatura önceden oluşturulmuş olmalıdır Fatura durumu beklemede olmalıdır İşlev faturayı kabul eder veya reddeder ve onu arşivle"
 				},
-				"createInvoice(address,uint256,bytes32)": {
+				"createInvoice(address,uint256,bytes32,bool)": {
 					"notice": "Bu işlev klinik tarafından çağrılabilir Clinic, hasta kategorisi sınırının 3 katından fazla fatura oluşturamaz eğer hastalar ilk kez gelirse, kategorisi kaydedilecektir İşlev, kullanıcının o kategoriye ait olup olmadığını kontrol eder PatientAddress adres fatura sahibi"
 				},
-				"registerClinic(bytes32,address)": {
+				"registerClinic(bytes32,address,bool)": {
 					"notice": "Bu Fonksiyon Kliniklerden çağrılabilir zaten kayıtlı bir klinik varsa, sözleşme güvenlik nedeniyle tekrar kaydolmasına izin vermez"
 				}
 			},
@@ -231,11 +393,11 @@
 			]
 		},
 		"HermesChain.sol": {
-			"keccak256": "0x4c42ccc5200ad99f263fc6fdc81912d8f1020c99c1288cebaedc1debff3fe9a0",
+			"keccak256": "0x4680a05dd8fb8680251def7dfa83d47a294bf3fbf5f1ee8dfd456c8779c1ab06",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://a9098cbe97bcc0c9433c9b2062417270f75e268cefa8252c6b516ccaf32dc5e3",
-				"dweb:/ipfs/QmbMNjkpZuWfcQ2EaiPwR2rZXBeaxr1if7ph3JvwBjBCop"
+				"bzz-raw://6871e0493ac901854ab0f0476d5bf952aa38ac934cb5cfeddf54ed566b02df71",
+				"dweb:/ipfs/QmdKnFEdg254U7GVzU7G4HFLfoRqPfCAhF6ctaH5CaRJoJ"
 			]
 		}
 	},
