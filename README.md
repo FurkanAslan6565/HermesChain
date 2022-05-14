@@ -47,11 +47,31 @@ hizmetleri, “Sağlık Turizmi ve Turistin Sağlığı Kapsamında Sunulan Sağ
 Fiyat Listesi” (Ek-2A) üzerinden ücretlendirilir. Ülkemizde bulunan yabancı temsilcilik
 ve elçiliklerde görev yapan yabancı uyruklu kişiler de bu madde kapsamında
 değerlendirilir. 
+
+Sağlık tesisleri, özel hastane, devlet hastanesi veya üniversite eğitim araştırma hastanesi
+fark etmeksizin hastadan, belirlenmiş olan fiyatın maksimum üç katı kadar ücret alabildiği için
+her işlem ücreti, asgari fiyat ile maksimum fiyat aralığında olmak zorundadır. Hastanelerin iki ayrı kategorisi olduğunu söylemişttik. A rol grubunda yer alan hastaneler max 3 kat B rol grubunda yer alan hastaneler max 2 kat fiyat taban verebilir.  Bu nedenle Akıllı
+Sözleşmemiz sınırları belirli, yoruma kapalı ve insan hatasına yer vermeyen bir mekanizmaya
+sahip olacaktır. Yoruma kapalı olması, Akıllı Sözleşmenin uygulanabilirliğini artıran önemli
+bir faktördür. İnsan hatasına yer vermemesi ise güvenilirlik, hesap verilebilirlik ve denetim
+açısından hayati bir önem arz etmektedir. Hatalı fatura düzenlenmesi durumunda, birinci hatalı
+faturada %2 para cezası, ikinci hatalı faturada %4 para cezası, üçüncü hatalı faturada ise “yetki
+belgesi iptali” cezası uygulanır. Yetki belgesinin maliyeti 1489 TL’dir.
+Akıllı Sözleşme, sağlık tesislerinin hastalara verdiği hizmet için kesilen faturaları SUT
+fiyatlarına uygunluğunu saniyeler içinde denetleyip faturanın hatalı olması veya olmaması
+senaryolarında ilgili birimlere geribildirimde bulunma işlevi görecektir. Bu inovasyon ile esas
+olarak sağlık tesislerinin, hatalı fatura girişi nedeniyle ödediği cezaların minimuma
+indirgenmesi hedeflenmektedir.
+[Sağlık Bakanlığı EK-2A Hasta Grubu İçin SUT Fiyatları](https://docs.google.com/spreadsheets/d/19KJTZJnFollWcN1lY7xtlCCFID4A6aFY/edit#gid=1711709992)
+
    <br>
+   
 ## Hastaneler de 2 kategoriye ayrılır 
- | A ROL GRUBU HASTANELER | B ROL GRUBU HASTANELER |
+
+| A ROL GRUBU HASTANELER | B ROL GRUBU HASTANELER |
 |--|--|
 | fiyatın max 3 katı kadar | fiyatın max 2 katı kadar |
+
 ``` 
 mapping (address => bytes32) groupA_clinicIds; 
 // Yalnızca kayıtlı  klinikler kayıtlı adreslerle fatura oluşturabilir A rol grubu hastaneler
@@ -73,11 +93,23 @@ function registerClinic(bytes32 _clinicHash, address clinicAddress, bool groupA)
 ➢ Hastaya ait pasaport ve sigorta şirketi kayıtlarının eksik yapılması  <br>
 ➢ Gerekli belgelerin eksik alınması veya hiç alınmaması <br>
 ➢ Girilen tıbbi hizmet kodları ile anamnez ve epikriz uyumunun sağlanmaması <br>
-➢ Yapılan işin her aşamasının ilgili kişilerce kontrolünün yapılmaması <br>
+➢ Yapılan işin her aşamasının ilgili kişilerce kontrolünün yapılmaması
+<br>
+## KODLAR ŞU ŞEKİLDEDİR
 
 ``` 
+// SPDX-License-Identifier: MIT
+
+//EK-2A hasta Kategorisi Faturalandırma süreci
+
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract Hermes is Ownable{
+    uint256 invoiceCreated; 
     mapping( bytes32 => uint256) _prices; // Mevzuata karşılık gelen fiyat ornek -> (keccak256 (S00010  = > 100  fiyatlama yapıldı.)
-    // mapping (address => address) _operators; 
+    // mapping (address => address) _operators;  
     // Yalnızca izin verilen operatörler fatura oluşturabilir
     mapping (address => bytes32) groupA_clinicIds; 
     // Yalnızca kayıtlı  klinikler kayıtlı adreslerle fatura oluşturabilir A rol grubu hastaneler
@@ -85,15 +117,14 @@ function registerClinic(bytes32 _clinicHash, address clinicAddress, bool groupA)
     // Yalnızca kayıtlı  klinikler kayıtlı adreslerle fatura oluşturabilir B rol grubu hastaneler & ADMS
     mapping (address => bytes32 ) patientCategories; 
     // Hasta kateforilerini belirle
-    mapping (address => Invoice[]) patientPastInvoices;
+    mapping (address => Invoice[]) patientPastInvoices; 
     // Bunu zincir üzerinde depolamak verimli değil ama biz MVP aşaması için saklıyoruz 
     mapping (bytes32 => Invoice) invoiceRecordsById; 
     // Bunu zincir üzerinde depolamak verimli değil ama biz MVP aşaması için saklıyoruz 
     event InvocieCreated(address indexed patient, bytes32 indexed clinic, uint256 timestamp);
     event InvocieAccepted(address indexed patient, bytes32 indexed clinic, uint256 timestamp);
-    //event InvociePaid(address indexed patient, bytes32 indexed clinic, uint256 timestamp);
     
-     /*
+    /*
     A ROL GRUBU HASTANELER 
      -  3 katına kadar tavan iyat belirleyebilir 
     B ROL GRUBU HASTANELER & ADSM
