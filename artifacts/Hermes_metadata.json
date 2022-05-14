@@ -75,6 +75,47 @@
 				"type": "event"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "_clinicHash",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bool",
+						"name": "approveReject",
+						"type": "bool"
+					}
+				],
+				"name": "approveInvoice",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patientAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "patientCategory",
+						"type": "bytes32"
+					}
+				],
+				"name": "createInvoice",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "owner",
 				"outputs": [
@@ -144,6 +185,12 @@
 		"userdoc": {
 			"kind": "user",
 			"methods": {
+				"approveInvoice(bytes32,bool)": {
+					"notice": "Bu fonksiyon hasta tarafından çağrılabilir Fatura önceden oluşturulmuş olmalıdır Fatura durumu beklemede olmalıdır İşlev faturayı kabul eder veya reddeder ve onu arşivle"
+				},
+				"createInvoice(address,uint256,bytes32)": {
+					"notice": "Bu işlev klinik tarafından çağrılabilir Clinic, hasta kategorisi sınırının 3 katından fazla fatura oluşturamaz eğer hastalar ilk kez gelirse, kategorisi kaydedilecektir İşlev, kullanıcının o kategoriye ait olup olmadığını kontrol eder PatientAddress adres fatura sahibi"
+				},
 				"registerClinic(bytes32,address)": {
 					"notice": "Bu Fonksiyon Kliniklerden çağrılabilir zaten kayıtlı bir klinik varsa, sözleşme güvenlik nedeniyle tekrar kaydolmasına izin vermez"
 				}
@@ -184,11 +231,11 @@
 			]
 		},
 		"HermesChain.sol": {
-			"keccak256": "0x15c3484d1023444d93bc9784b348f2d6422d3ffdfc0a16ed6b19e6396f2f073d",
+			"keccak256": "0x4c42ccc5200ad99f263fc6fdc81912d8f1020c99c1288cebaedc1debff3fe9a0",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://1858e15e107da5991c4ea227a31ddc8733c23f2ea05e01af27c3e8a98e0201d0",
-				"dweb:/ipfs/QmZfVq38GqAkdZTo4bdq8qfsAQKbjAuvpvXCEiVfM9pP6R"
+				"bzz-raw://a9098cbe97bcc0c9433c9b2062417270f75e268cefa8252c6b516ccaf32dc5e3",
+				"dweb:/ipfs/QmbMNjkpZuWfcQ2EaiPwR2rZXBeaxr1if7ph3JvwBjBCop"
 			]
 		}
 	},

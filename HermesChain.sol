@@ -53,10 +53,74 @@ contract Hermes is Ownable{
     function registerClinic(bytes32 _clinicHash, address clinicAddress) public onlyOwner{
         clinicIds[clinicAddress] = _clinicHash;
     }
+    /**
+    * Bu işlev klinik tarafından çağrılabilir
+    * Clinic, hasta kategorisi sınırının 3 katından fazla fatura oluşturamaz
+    * eğer hastalar ilk kez gelirse, kategorisi kaydedilecektir
+    * İşlev, kullanıcının o kategoriye ait olup olmadığını kontrol eder
+    * PatientAddress adres fatura sahibi
+    
+    */
+    function createInvoice(address patientAddress, uint256 amount, bytes32 patientCategory) public onlyClinic{
+        if(patientCategories[patientAddress] == 0){
+            patientCategories[patientAddress] = patientCategory; //eğer hastanaeden almmaışsa kendi adresini 
+        }else{
+            require(patientCategories[patientAddress] == patientCategory, "Patient can't be charged for this category"); //Bu kategori için hastadan ücret alınamaz
+        }
+        unchecked{
+            require(_prices[patientCategory] *3 >= amount, "Patient can't be charged this amount"); //"Hastadan bu miktar tahsil edilemez 3 katından az olacak
+        }
+
+        Invoice memory newInvoice = Invoice(
+            keccak256(abi.encodePacked(msg.sender, patientAddress, amount, block.timestamp, block.number)),
+            patientCategory,
+            amount,
+            patientAddress,
+            Status.Pending
+        );
+
+        pendingRequests[patientAddress][clinicIds[msg.sender]] = newInvoice;
+        emit InvocieCreated(patientAddress, clinicIds[msg.sender], amount);
+
+    }
+
+
+   // Faturayı onayla
+    /**
+    *  Bu fonksiyon hasta tarafından çağrılabilir
+    * Fatura önceden oluşturulmuş olmalıdır
+    * Fatura durumu beklemede olmalıdır
+    * İşlev faturayı kabul eder veya reddeder ve onu arşivle
+    */
+    function approveInvoice(bytes32 _clinicHash, bool approveReject) public onlyPatient{
+        require(pendingRequests[msg.sender][_clinicHash].invoiceId != 0x0, "Invoice can't found" ); //Fatura alındı
+        require(pendingRequests[msg.sender][_clinicHash].status == Status.Pending, "Invoice can't be accepted"); //Fatura kabul edilemez
+        if(approveReject){
+            pendingRequests[msg.sender][_clinicHash].status = Status.Accepted;
+        }else{
+            pendingRequests[msg.sender][_clinicHash].status = Status.Rejected;
+        }
+        archiveInvoice(_clinicHash);
+    }
+
+    function archiveInvoice(bytes32 _clinicHash) internal {
+        
+        patientPastInvoices[msg.sender].push(pendingRequests[msg.sender][_clinicHash]);
+
+        //Kimliği olan faturayı kaydet
+        invoiceRecordsById[pendingRequests[msg.sender][_clinicHash].invoiceId] = pendingRequests[msg.sender][_clinicHash] ;
+
+        
+        pendingRequests[msg.sender][_clinicHash] = Invoice(0x0, 0x0, 0, address(0), Status.Pending);
+        emit InvocieAccepted(msg.sender, _clinicHash, pendingRequests[msg.sender][_clinicHash].amount);
+    }
+
+   
+    
+}
 
 
 
 
  
     
-}
