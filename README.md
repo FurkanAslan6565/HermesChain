@@ -11,7 +11,7 @@ Ardından hastane de işleyen bu sürecin faturalandırma sürecini yazdığım�
 #### FATURA İŞ AKIŞ ŞEMASI
 ![FATURA İŞ AKIŞ ŞEMASI](https://github.com/FurkanAslan6565/HermesChain/blob/main/docs/Akissemasi.png)
 <br>
-### VERİ DİYAGRAMI
+### VERİ DİYAGRAMIMIZ
 ![VERİ DİYAGRAMI](https://github.com/FurkanAslan6565/HermesChain/blob/main/docs/dataaaaaaaaaaa.png)
 
 #### KISACA
