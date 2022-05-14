@@ -1,11 +1,19 @@
 # HermesChain
-Sağlık Hizmetlerinde  Akıllı fatura Denetim Sistemi,
+Sağlık Hizmetlerinde  Akıllı fatura Denetim Sistemi
+# Biz Kimiz 
+HermesChain,  mevcut sağlık sistemlerini merkezi(siz) bir altyapıya  taşımak amacıyla blok zincir veya blok zincir tabanlı teknolojileri kullanarak bu hizmetin hem alınması hem de verilmesi sırasında oluşan sorunları önemli ölçüde  azaltmayı amaçlayan bir sağlık hizmeti platformudur.
 
 ## Sağlık ekosistemi 
 
 ***Öncelikle kısaca hastanede fatura sistemleri nasıl işliyor inceleyelim.
 Ardından hastane de işleyen bu sürecin faturalandırma sürecini yazdığımız kodlarla ayrıntılı bir şekilde açıklayacağız.***
+<br>
+#### FATURA İŞ AKIŞ ŞEMASI
 ![FATURA İŞ AKIŞ ŞEMASI](https://github.com/FurkanAslan6565/HermesChain/blob/main/docs/Akissemasi.png)
+<BR>
+### VERİ DİYAGRAMI SAĞLIK BAKANLIĞI
+![FATURA İŞ AKIŞ ŞEMASI](https://github.com/FurkanAslan6565/HermesChain/blob/main/docs/Sa%C4%9Fl%C4%B1kBakanl%C4%B1%C4%9F%C4%B1.png)
+
 #### KISACA
 
 [Sağlık Bakanlığı](https://www.resmigazete.gov.tr/eskiler/2017/07/20170713-3.htm)
