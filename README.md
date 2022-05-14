@@ -3,6 +3,11 @@ Sağlık Hizmetlerinde  Akıllı fatura Denetim Sistemi,
 
 ## Sağlık ekosistemi 
 
+***Öncelikle kısaca hastanede fatura sistemleri nasıl işliyor inceleyelim.
+Ardından hastane de işleyen bu sürecin faturalandırma sürecini yazdığımız kodlarla ayrıntılı bir şekilde açıklayacağız.***
+![FATURA İŞ AKIŞ ŞEMASI](https://github.com/FurkanAslan6565/HermesChain/blob/main/docs/Akissemasi.png)
+#### KISACA
+
 [Sağlık Bakanlığı](https://www.resmigazete.gov.tr/eskiler/2017/07/20170713-3.htm)
 >(1) Uluslararası sağlık turizmi sağlık tesisleri tarafından, sağlık turizmi 
 kapsamında hizmet alanlar için ilgili mevzuatına göre satış fişi veya fatura düzenlenmesi 
@@ -37,7 +42,19 @@ değerlendirilir.
 
 ## Faturalandırma Aşamasında Dikkat Edilecek Hususlar:
 ➢ Düzenlenen faturanın içeriğinin gerçeği yansıtmaması <br>
-➢ Hastaya ait pasaport ve sigorta şirketi kayıtlarının eksik yapılması<br>
+➢ Hastaya ait pasaport ve sigorta şirketi kayıtlarının eksik yapılması 
+<br> 
+```
+struct Invoice {
+        bytes32 invoiceId;
+        bytes32 typeOfPatient;
+        uint256 amount;
+        address patient;
+        Status status;
+    }
+
+```
+
 ➢ Gerekli belgelerin eksik alınması veya hiç alınmaması<br>
 ➢ Girilen tıbbi hizmet kodları ile anamnez ve epikriz uyumunun sağlanmaması<br>
 
