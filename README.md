@@ -1,5 +1,6 @@
 # HermesChain
-Sağlık Hizmetlerinde  Akıllı fatura Denetim Sistemi
+Sağlık Hizmetlerinde  Akıllı fatura Denetim Sistem <br><br><br><br>
+***Kodu Çalıştırmak için docs klasüründen video izleyiniz***
 # Biz Kimiz 
 HermesChain,  mevcut sağlık sistemlerini merkezi(siz) bir altyapıya  taşımak amacıyla blok zincir veya blok zincir tabanlı teknolojileri kullanarak bu hizmetin hem alınması hem de verilmesi sırasında oluşan sorunları önemli ölçüde  azaltmayı amaçlayan bir sağlık hizmeti platformudur.
 
@@ -96,6 +97,7 @@ function registerClinic(bytes32 _clinicHash, address clinicAddress, bool groupA)
 ➢ Yapılan işin her aşamasının ilgili kişilerce kontrolünün yapılmaması
 <br>
 ## KODLAR ŞU ŞEKİLDEDİR
+**Kodu Çalıştırmak için docs klasüründen video izleyiniz**
 
 ``` 
 // SPDX-License-Identifier: MIT
