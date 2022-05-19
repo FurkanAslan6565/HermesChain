@@ -285,4 +285,5 @@ contract Hermes is Ownable{
 }
 ```
 
-
+Takım : Furkan Aslan
+       Berzan POLAT
